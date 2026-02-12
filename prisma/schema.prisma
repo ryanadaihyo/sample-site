@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model Content {
+  id          String      @id @default(cuid())
+  type        ContentType
+  slug        String      @unique
+  title       String
+  description String
+  releaseDate DateTime
+  imageUrl    String
+  createdAt   DateTime    @default(now())
+}
+
+model Genre {
+  id   String @id @default(cuid())
+  name String
+  slug String @unique
+}
+
+enum ContentType {
+  MOVIE
+  MUSIC
+}
