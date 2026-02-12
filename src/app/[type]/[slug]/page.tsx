@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import prisma from '@/lib/db';
 import JsonLd from '@/components/seo/JsonLd';
 
 import { featuredContent } from '@/lib/mock-data';
@@ -15,23 +14,11 @@ type Props = {
 
 // Helper function to find content
 async function findContent(type: string, slug: string) {
-    // 1. Check mock data first for sample
+    // Use mock data only
     const mockItem = featuredContent.find(
         (item) => item.slug === slug && item.type === type
     );
-    if (mockItem) return mockItem;
-
-    // 2. Fallback to DB
-    try {
-        return await prisma.content.findUnique({
-            where: {
-                slug: slug,
-                type: type as any,
-            },
-        });
-    } catch (e) {
-        return null;
-    }
+    return mockItem || null;
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
