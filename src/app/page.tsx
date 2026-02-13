@@ -12,8 +12,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Search } from "@/components/search";
-
-import { featuredContent } from "@/lib/mock-data";
+import { searchArtists, type SpotifyArtist } from "@/lib/spotify";
+import { Music2, Disc3 } from "lucide-react";
 
 export default async function Home(props: {
   searchParams: Promise<{ q?: string }>;
@@ -21,92 +21,121 @@ export default async function Home(props: {
   const searchParams = await props.searchParams;
   const query = searchParams.q || "";
 
-  const filteredContent = featuredContent.filter((item) =>
-    item.title.toLowerCase().includes(query.toLowerCase()) ||
-    item.description.toLowerCase().includes(query.toLowerCase())
-  );
+  let artists: SpotifyArtist[] = [];
+  let searchError: string | null = null;
+
+  // Fetch search results if query exists
+  if (query.trim()) {
+    try {
+      artists = await searchArtists(query, 20);
+      console.log(`✅ Found ${artists.length} artists`);
+    } catch (error) {
+      console.error("❌ Search error:", error);
+      searchError = error instanceof Error ? error.message : 'Search failed';
+    }
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <SiteHeader />
 
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted/20">
+        <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-b from-muted/30 to-background">
           <div className="container px-4 md:px-6 mx-auto">
             <div className="flex flex-col items-center gap-4 text-center">
               <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
-                  至高のカルチャーを発見しよう
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                  音楽の世界を探索しよう
                 </h1>
                 <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  映画や音楽のための厳選されたデータベース。お気に入りのコンテンツを探して、整理しましょう。
+                  Spotifyの膨大な音楽データベースから、お気に入りのアーティストやアルバムを見つけましょう。
                 </p>
               </div>
               <div className="w-full max-w-sm space-y-2">
-                <Search />
+                <Search placeholder="アーティストやアルバムを検索..." />
               </div>
             </div>
           </div>
         </section>
 
-        <section className="container px-4 md:px-6 py-12 md:py-16 mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold tracking-tight">注目コンテンツ</h2>
-            {/* リンク先の実装がまだのため、一旦無効化、あるいは将来実装予定 */}
-            {/* <Link href="/browse" className="text-sm font-medium hover:underline text-primary">
-              すべて見る
-            </Link> */}
-          </div>
-
-          {filteredContent.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {filteredContent.map((item) => (
-                <Card key={item.id} className="overflow-hidden group hover:shadow-lg transition-all duration-300 border-muted">
-                  <div className="relative aspect-[2/3] w-full overflow-hidden bg-muted">
-                    <Image
-                      src={item.imageUrl}
-                      alt={item.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                      priority={true}
-                    />
-                    <div className="absolute top-2 right-2 z-10">
-                      <Badge variant={item.type === 'MOVIE' ? 'default' : 'secondary'} className="shadow-sm">
-                        {item.type}
-                      </Badge>
-                    </div>
+        {query ? (
+          <section className="container px-4 md:px-6 py-12 md:py-16 mx-auto">
+            {searchError ? (
+              <div className="text-center py-12">
+                <p className="text-destructive mb-2">検索エラーが発生しました</p>
+                <p className="text-sm text-muted-foreground">{searchError}</p>
+              </div>
+            ) : artists.length > 0 ? (
+              <div className="space-y-12">
+                {/* Artists Section */}
+                <div>
+                  <div className="flex items-center gap-2 mb-6">
+                    <Music2 className="h-6 w-6 text-primary" />
+                    <h2 className="text-2xl font-bold tracking-tight">アーティスト</h2>
+                    <Badge variant="secondary" className="ml-2">
+                      {artists.length}
+                    </Badge>
                   </div>
-                  <CardHeader className="p-4 pb-2">
-                    <CardTitle className="line-clamp-1 text-lg">{item.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-4 pt-0 pb-2">
-                    <CardDescription className="line-clamp-2 text-xs h-8">
-                      {item.description}
-                    </CardDescription>
-                  </CardContent>
-                  <CardFooter className="p-4 pt-2">
-                    <Button asChild className="w-full" variant="outline" size="sm">
-                      <Link href={`/${item.type.toLowerCase()}/${item.slug}`}>
-                        詳細を見る
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                    {artists.map((artist) => (
+                      <Link
+                        key={artist.id}
+                        href={`/artist/${artist.id}`}
+                        className="group"
+                      >
+                        <div className="flex flex-col gap-3">
+                          <div className="relative aspect-square w-full overflow-hidden rounded-full bg-muted shadow-md group-hover:shadow-xl transition-all duration-300">
+                            <Image
+                              src={artist.images?.[0]?.url || "/placeholder-artist.png"}
+                              alt={artist.name}
+                              fill
+                              className="object-cover transition-transform duration-500 group-hover:scale-110"
+                              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
+                            />
+                          </div>
+                          <div className="text-center">
+                            <p className="font-semibold line-clamp-1 group-hover:text-primary transition-colors">
+                              {artist.name}
+                            </p>
+                            {artist.genres?.length > 0 && (
+                              <p className="text-xs text-muted-foreground line-clamp-1 mt-1">
+                                {artist.genres[0]}
+                              </p>
+                            )}
+                          </div>
+                        </div>
                       </Link>
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">
+                  「{query}」の検索結果が見つかりませんでした。
+                </p>
+              </div>
+            )}
+          </section>
+        ) : (
+          <section className="container px-4 md:px-6 py-12 md:py-16 mx-auto">
+            <div className="text-center space-y-4">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
+                <Music2 className="h-8 w-8 text-primary" />
+              </div>
+              <h2 className="text-2xl font-bold">音楽を検索して始めましょう</h2>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                上の検索バーにアーティスト名やアルバム名を入力して、お気に入りの音楽を探してください。
+              </p>
             </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">検索結果が見つかりませんでした。</p>
-            </div>
-          )}
-        </section>
+          </section>
+        )}
       </main>
 
       <footer className="border-t py-6 md:py-0">
         <div className="container flex flex-col items-center justify-between gap-4 md:h-16 md:flex-row mx-auto px-4">
           <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
-            &copy; 2026 Culture DB. All rights reserved.
+            &copy; 2026 Music Discovery. Powered by Spotify.
           </p>
         </div>
       </footer>

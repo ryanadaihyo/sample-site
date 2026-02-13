@@ -5,7 +5,7 @@ import { useState, useTransition } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
-export function Search() {
+export function Search({ placeholder = "コンテンツを検索..." }: { placeholder?: string }) {
     const router = useRouter()
     const searchParams = useSearchParams()
     const [isPending, startTransition] = useTransition()
@@ -28,7 +28,7 @@ export function Search() {
         <div className="relative w-full max-w-sm">
             <Input
                 type="search"
-                placeholder="コンテンツを検索..."
+                placeholder={placeholder}
                 className="pr-10"
                 value={query}
                 onChange={(e) => handleSearch(e.target.value)}

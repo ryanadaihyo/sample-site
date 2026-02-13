@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { Database, Film, Disc, Search as SearchIcon, Menu } from "lucide-react"
+import { Music2, Search as SearchIcon, Menu } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import {
@@ -23,10 +23,10 @@ export function SiteHeader() {
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2 group shrink-0 mr-6">
                     <div className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
-                        <Database className="h-5 w-5 text-primary transition-transform group-hover:rotate-12" />
+                        <Music2 className="h-5 w-5 text-primary transition-transform group-hover:rotate-12" />
                     </div>
                     <span className="text-xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
-                        Culture DB
+                        Music Discovery
                     </span>
                 </Link>
 
@@ -35,35 +35,17 @@ export function SiteHeader() {
                     <NavigationMenu>
                         <NavigationMenuList>
                             <NavigationMenuItem>
-                                <NavigationMenuTrigger className="h-9 bg-transparent hover:bg-accent/50 data-[state=open]:bg-accent/50">
-                                    探す
-                                </NavigationMenuTrigger>
-                                <NavigationMenuContent>
-                                    <ul className="grid w-[420px] gap-3 p-4 md:w-[520px] md:grid-cols-[240px_1fr] lg:w-[600px] lg:grid-cols-[260px_1fr]">
-                                        <li className="row-span-2">
-                                            <NavigationMenuLink asChild>
-                                                <Link
-                                                    className="flex h-full min-h-[180px] w-full select-none flex-col justify-end rounded-lg bg-gradient-to-br from-primary/10 via-primary/5 to-muted p-6 no-underline outline-none ring-offset-background transition-all duration-200 hover:bg-accent/50 focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                                    href="/"
-                                                >
-                                                    <div className="mb-2 mt-4 flex items-center gap-2 text-lg font-semibold">
-                                                        <Database className="h-5 w-5 text-primary" />
-                                                        Culture DB
-                                                    </div>
-                                                    <p className="text-sm leading-tight text-muted-foreground">
-                                                        最高の映画や音楽を見つけよう。
-                                                    </p>
-                                                </Link>
-                                            </NavigationMenuLink>
-                                        </li>
-                                        <ListItem href="/movies" title="映画" icon={<Film className="h-4 w-4" />}>
-                                            人気の映画や隠れた名作を探索。
-                                        </ListItem>
-                                        <ListItem href="/music" title="音楽" icon={<Disc className="h-4 w-4" />}>
-                                            アルバム、アーティスト、楽曲。
-                                        </ListItem>
-                                    </ul>
-                                </NavigationMenuContent>
+                                <NavigationMenuLink asChild>
+                                    <Link
+                                        href="/"
+                                        className={cn(
+                                            navigationMenuTriggerStyle(),
+                                            "h-9 bg-transparent hover:bg-accent/50"
+                                        )}
+                                    >
+                                        探す
+                                    </Link>
+                                </NavigationMenuLink>
                             </NavigationMenuItem>
                             <NavigationMenuItem>
                                 <NavigationMenuLink asChild>
@@ -116,13 +98,10 @@ export function SiteHeader() {
                                 </NavigationMenuTrigger>
                                 <NavigationMenuContent className="right-0">
                                     <ul className="grid w-[300px] gap-2 p-4">
-                                        <ListItem href="/movies" title="映画" icon={<Film className="h-4 w-4" />}>
-                                            人気の映画や隠れた名作
+                                        <ListItem href="/" title="探す" icon={<SearchIcon className="h-4 w-4" />}>
+                                            アーティストやアルバムを検索
                                         </ListItem>
-                                        <ListItem href="/music" title="音楽" icon={<Disc className="h-4 w-4" />}>
-                                            アルバム、アーティスト、楽曲
-                                        </ListItem>
-                                        <ListItem href="/about" title="About" icon={<Database className="h-4 w-4" />}>
+                                        <ListItem href="/about" title="About" icon={<Music2 className="h-4 w-4" />}>
                                             サイトについて
                                         </ListItem>
                                     </ul>
