@@ -15,6 +15,7 @@ export async function addComment(formData: FormData): Promise<ActionResult> {
         page: formData.get("page"),
         name: formData.get("name") || undefined,
         parentId: formData.get("parentId") || null,
+        pathname: formData.get("pathname"),
     };
 
     const parsed = addCommentSchema.safeParse(raw);
@@ -31,7 +32,11 @@ export async function addComment(formData: FormData): Promise<ActionResult> {
             data: { content, page, name, parentId },
         });
 
-        revalidatePath(page);
+        if (typeof raw.pathname === "string") {
+            revalidatePath(raw.pathname);
+        } else {
+            revalidatePath(page);
+        }
         return { success: true };
     } catch (error) {
         console.error("Failed to add comment:", error);

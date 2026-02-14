@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { addComment } from "@/lib/actions/comments";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -72,6 +72,7 @@ export function Comments({ initialComments, pageId }: CommentsProps) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const router = useRouter();
+    const pathname = usePathname();
 
     const commentTree = useMemo(
         () => buildCommentTree(initialComments),
@@ -96,6 +97,7 @@ export function Comments({ initialComments, pageId }: CommentsProps) {
             if (parentId) {
                 formData.append("parentId", parentId);
             }
+            formData.append("pathname", pathname);
 
             try {
                 const result: ActionResult = await addComment(formData);
