@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SiteHeader } from "@/components/layout/site-header";
+import { SiteFooter } from "@/components/layout/site-footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,32 +16,34 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Culture DB",
-    default: "Culture DB",
+    template: "%s | Music Discovery",
+    default: "Music Discovery",
   },
-  description: "映画や音楽のための包括的なデータベース。",
-  metadataBase: new URL("https://culture-db-placeholder.vercel.app"),
+  description: "Spotify APIを活用した音楽発見プラットフォーム。",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://culture-db-placeholder.vercel.app"
+  ),
   alternates: {
     canonical: "/",
   },
   openGraph: {
     type: "website",
     locale: "ja_JP",
-    url: "https://culture-db-placeholder.vercel.app",
-    siteName: "Culture DB",
+    url: "/",
+    siteName: "Music Discovery",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Culture DB",
+        alt: "Music Discovery",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Culture DB",
-    description: "最高の映画や音楽を見つけよう。",
+    title: "Music Discovery",
+    description: "Spotify APIで素晴らしい音楽を見つけよう。",
     images: ["/og-image.jpg"],
   },
   robots: {
@@ -65,7 +69,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <div className="flex min-h-screen flex-col bg-background text-foreground">
+          <SiteHeader />
+          <main className="flex-1">{children}</main>
+          <SiteFooter />
+        </div>
       </body>
     </html>
   );

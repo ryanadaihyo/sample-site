@@ -1,8 +1,10 @@
-import React from 'react';
+import React from "react";
 
-type JsonLdProps = {
-    data: Record<string, any>;
-};
+type JsonLdData = Record<string, unknown>;
+
+interface JsonLdProps {
+    data: JsonLdData;
+}
 
 const JsonLd: React.FC<JsonLdProps> = ({ data }) => {
     return (
